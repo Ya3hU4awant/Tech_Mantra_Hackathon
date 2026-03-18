@@ -19,13 +19,13 @@ def train_best_model():
     df = pd.read_csv(DATA_PATH)
     
     # 2. Setup the experiment
-    # We specify 'is_fraud' as the target variable.
-    # PyCaret handles categorical encoding (transaction_type) automatically.
-    # session_id=42 ensures reproducibility.
+    # fix_imbalance=True handles the 14.5% fraud rate using SMOTE
     exp = setup(
         data=df, 
         target='is_fraud', 
         session_id=42,
+        fix_imbalance=True,
+        fix_imbalance_method='smote',
         log_experiment=False,
         verbose=False,
         html=False

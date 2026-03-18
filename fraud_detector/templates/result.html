@@ -9,92 +9,105 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body class="bg-light">
+<body class="bg-dark-theme text-light">
 
     <!-- Section: Header / Navbar -->
-    <nav class="navbar navbar-dark mb-5">
-        <div class="container justify-content-center">
-            <span class="navbar-brand mb-0 h1 fw-bold fs-3">🛡️ {{ title }}</span>
+    <nav class="navbar navbar-dark mb-4 border-bottom border-secondary animate-fade-down">
+        <div class="container d-flex justify-content-between">
+            <span class="navbar-brand mb-0 h1 fw-bold fs-3 tracking-tight">PROTECT<span class="text-primary">AI</span></span>
+            <a href="{{ url_for('index') }}" class="btn btn-outline-light btn-sm rounded-pill px-3">← BACK</a>
         </div>
     </nav>
 
     <div class="container pb-5">
         <div class="row justify-content-center">
-            <div class="col-md-7">
-                <!-- Section: Result Card -->
-                <div class="card shadow-lg border-0 rounded-4 animate-up">
-                    <div class="card-body p-5">
-                        
-                        <!-- Prediction Title & Badge -->
-                        <div class="text-center mb-5">
-                            <h4 class="text-muted text-uppercase fw-bold mb-3 ls-1">Analysis Result</h4>
-                            {% if results.prediction == 'Fraud' %}
-                                <div class="badge-result bg-danger px-4 py-3 rounded-pill">
-                                    <h1 class="m-0 text-white fw-800">FRAUD DETECTED</h1>
+            <div class="col-lg-8">
+                
+                <!-- Main Grid Layout -->
+                <div class="row g-4">
+                    <!-- Left: Hero Prediction Card -->
+                    <div class="col-md-5">
+                        <div class="card shadow-2xl border-0 rounded-4 premium-card h-100 p-4 animate-slide-up">
+                            <div class="text-center mb-4">
+                                <h5 class="text-secondary tracking-widest small fw-bold mb-4">CONFIDENCE SCORE</h5>
+                                
+                                <!-- Section: Speedometer Gauge -->
+                                <!-- The needle now points based on prob_fraud (0=Safe, 1=Fraud) -->
+                                {% set gauge_class = 'gauge-color-high' if results.risk_level == 'High' else ('gauge-color-medium' if results.risk_level == 'Medium' else 'gauge-color-low') %}
+                                <div class="gauge-wrapper {{ gauge_class }}">
+                                    <div class="gauge-container mx-auto mb-4">
+                                        <div class="gauge-base"></div>
+                                        <div class="gauge-active-bg" style="opacity: {{ results.prob_fraud * 0.8 }}"></div>
+                                        <div class="gauge-needle" style="--target-rotation: {{ (results.prob_fraud * 180) - 90 }}deg"></div>
+                                        <div class="gauge-center">
+                                            <span class="gauge-value fw-800">{{ (results.prob_fraud * 100) | int }}<small>%</small></span>
+                                        </div>
+                                    </div>
                                 </div>
-                            {% else %}
-                                <div class="badge-result bg-success px-4 py-3 rounded-pill">
-                                    <h1 class="m-0 text-white fw-800">TRANSACTION SAFE</h1>
-                                </div>
-                            {% endif %}
-                        </div>
 
-                        <hr class="my-4 opacity-50">
-
-                        <!-- Risk Metrics Grid -->
-                        <div class="row mb-5 py-2">
-                            <div class="col-6 border-end text-center">
-                                <p class="text-muted small mb-1 uppercase fw-semibold">Risk Level</p>
-                                {% if results.risk_level == 'High' %}
-                                    <h3 class="fw-bold text-danger m-0">🔴 {{ results.risk_level }}</h3>
-                                {% elif results.risk_level == 'Medium' %}
-                                    <h3 class="fw-bold text-warning m-0">🟡 {{ results.risk_level }}</h3>
+                                {% if results.prediction == 'Fraud' %}
+                                    <div class="status-badge bg-soft-danger animate-pulse-slow">
+                                        <span class="fw-bold fs-5 text-danger">● FRAUD FLAG</span>
+                                    </div>
                                 {% else %}
-                                    <h3 class="fw-bold text-success m-0">🟢 {{ results.risk_level }}</h3>
+                                    <div class="status-badge bg-soft-success">
+                                        <span class="fw-bold fs-5 text-success">● SECURE</span>
+                                    </div>
                                 {% endif %}
                             </div>
-                            <div class="col-6 text-center">
-                                <p class="text-muted small mb-1 uppercase fw-semibold">Model Confidence</p>
-                                <h3 class="fw-bold text-dark m-0">{{ (results.confidence * 100) | round(2) }}%</h3>
+
+                            <div class="text-center pt-3 border-top border-secondary opacity-75">
+                                <p class="mb-0 text-secondary small">RISK LEVEL</p>
+                                <h4 class="fw-bold {{ 'text-danger' if results.risk_level == 'High' else ('text-warning' if results.risk_level == 'Medium' else 'text-success') }}">
+                                    {{ results.risk_level }}
+                                </h4>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Analysis & Distributions -->
+                    <div class="col-md-7">
+                        <!-- AI Explanation Card -->
+                        <div class="card shadow-2xl border-0 rounded-4 premium-card p-4 mb-4 animate-slide-up" style="animation-delay: 0.15s;">
+                            <h6 class="fw-bold mb-3 text-white d-flex align-items-center">
+                                <span class="bg-primary rounded-circle p-1 me-2" style="width: 8px; height: 8px;"></span>
+                                LOGICAL ANALYSIS
+                            </h6>
+                            <div class="bg-dark-soft p-3 rounded-3 border border-secondary shadow-inner">
+                                <p class="mb-0 text-light opacity-75 fst-italic">"{{ results.explanation }}"</p>
                             </div>
                         </div>
 
-                        <!-- Confidence Bar -->
-                        <div class="mb-5">
-                            <p class="text-muted small mb-2 fw-semibold">Confidence Score Visualizer</p>
-                            <div class="progress rounded-pill bg-light" style="height: 12px;">
-                                {% set bar_color = 'bg-danger' if results.prediction == 'Fraud' else 'bg-success' %}
-                                <div class="progress-bar {{ bar_color }} progress-bar-striped progress-bar-animated" 
-                                     role="progressbar" 
-                                     style="width: {{ results.confidence * 100 }}%" 
-                                     aria-valuenow="{{ results.confidence * 100 }}" 
-                                     aria-valuemin="0" 
-                                     aria-valuemax="100"></div>
+                        <!-- Feature Distribution Section (Reference Photo Style) -->
+                        <div class="card shadow-2xl border-0 rounded-4 premium-card p-4 animate-slide-up" style="animation-delay: 0.3s;">
+                            <h6 class="fw-bold mb-4 text-white">Feature distributions</h6>
+                            
+                            <div class="feature-distribution-wrapper">
+                                {% for item in results.distributions %}
+                                <div class="feature-item d-flex align-items-center mb-3 animate-staggered-fade" style="animation-delay: {{ 0.4 + loop.index0 * 0.1 }}s;">
+                                    <div class="feature-label text-secondary small text-start pe-3" style="width: 140px; white-space: nowrap;">
+                                        {{ item.label }}
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="distribution-bar-bg">
+                                            <div class="distribution-bar-active animate-fill-bar" 
+                                                 style="width: {{ item.value }}%; background-color: {{ item.color }};"></div>
+                                        </div>
+                                    </div>
+                                    <div class="feature-value text-secondary small ps-3 fw-bold" style="width: 50px;">
+                                        {{ item.value }}%
+                                    </div>
+                                </div>
+                                {% endfor %}
                             </div>
                         </div>
-
-                        <!-- Explanation Section -->
-                        <div class="explanation-box p-4 rounded-4 mb-5">
-                            <h6 class="fw-bold mb-2 text-dark">AI Explanation:</h6>
-                            <p class="mb-0 text-muted italic">"{{ results.explanation }}"</p>
-                        </div>
-
-                        <!-- Action Buttons -->
-                        <div class="text-center">
-                            <a href="{{ url_for('index') }}" class="btn btn-dark px-5 py-3 rounded-pill fw-bold transition-btn shadow">
-                                ← ANALYZE ANOTHER
-                            </a>
-                        </div>
-
                     </div>
                 </div>
 
-                <!-- Footer Summary of Input -->
-                <div class="mt-4 text-center">
-                    <p class="text-muted small">
-                        Analysis performed on <strong>₹{{ input.amount }}</strong> ({{ input.transaction_type }}) 
-                        with location mismatch: <strong>{{ input.location_mismatch }}</strong>.
-                    </p>
+                <div class="mt-5 text-center">
+                    <a href="{{ url_for('index') }}" class="btn-premium-nav animate-fade" style="animation-delay: 0.4s;">
+                        ANALYZE ANOTHER TRANSACTION
+                    </a>
                 </div>
 
             </div>

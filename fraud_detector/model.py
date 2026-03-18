@@ -56,35 +56,50 @@ def predict_fraud(input_data: dict) -> dict:
     pred_label = int(predictions['prediction_label'].iloc[0])
     confidence = float(predictions['prediction_score'].iloc[0])
 
-    # Derive human-readable results
-    prediction_text = "Fraud" if pred_label == 1 else "Safe"
-    
-    # Calculate Risk Level based on probability
-    if confidence >= THRESHOLD_HIGH:
+    # 3. Synchronize Prediction & Risk Level Logic
+    # We will now derive EVERYTHING from the probability of fraud.
+    is_fraud_pred = (pred_label == 1)
+    # PyCaret 'prediction_score' is the probability of the predicted class.
+    # Convert to probability of fraud (label 1).
+    prob_fraud = confidence if is_fraud_pred else (1 - confidence)
+
+    # Determine Risk Level based on probability_of_fraud
+    if prob_fraud >= THRESHOLD_HIGH:
         risk_level = "High"
-    elif confidence >= THRESHOLD_MEDIUM:
+    elif prob_fraud >= THRESHOLD_MEDIUM:
         risk_level = "Medium"
     else:
         risk_level = "Low"
 
-    # Generate Explanation logic based on input features
+    prediction_text = "Fraud" if is_fraud_pred else "Safe"
+    
+    # Deep Analysis explanation
     explanation_parts = []
-    if float(input_data.get('amount', 0)) > 5000:
-        explanation_parts.append("High transaction amount")
-    if input_data.get('location_mismatch') == 'yes':
-        explanation_parts.append("Mismatch in geographical location")
-    if input_data.get('time_of_day') == 'night':
-        explanation_parts.append("Transaction occurring at night")
+    if float(input_data.get('amount', 0)) > 5000: explanation_parts.append("High amount")
+    if input_data.get('location_mismatch') == 'yes': explanation_parts.append("Location mismatch")
+    if input_data.get('time_of_day') == 'night': explanation_parts.append("Night signature")
 
-    if not explanation_parts:
-        explanation = "Transaction indicators are normal."
+    if is_fraud_pred:
+        explanation = f"Detected pattern matching known fraud signatures ({int(prob_fraud*100)}% risk). { ' + '.join(explanation_parts) if explanation_parts else '' }"
     else:
-        status_word = "suspicious" if pred_label == 1 else "noteworthy"
-        explanation = f"{' + '.join(explanation_parts)} flagged as {status_word}."
+        explanation = f"Transaction appears secure. Risk evaluation: {int(prob_fraud*100)}%."
+
+    # Generate Feature Distribution Data (simulated for UI)
+    # Formatting fix: removed 'unit' to prevent overlapping icons in UI
+    feature_distributions = [
+        {"label": "Online Purchase", "value": 85 if input_data.get('transaction_type') == 'online' else 15, "color": "#3498db"},
+        {"label": "In-Store Swipe", "value": 85 if input_data.get('transaction_type') == 'in-store' else 15, "color": "#3498db"},
+        {"label": "Wire Transfer", "value": 85 if input_data.get('transaction_type') == 'wire-transfer' else 15, "color": "#3498db"},
+        {"label": "Location Mismatch", "value": 80 if input_data.get('location_mismatch') == 'yes' else 10, "color": "#e67e22"},
+        {"label": "Night Transaction", "value": 90 if input_data.get('time_of_day') == 'night' else 10, "color": "#9b59b6"},
+        {"label": "Transaction Amount", "value": min(100, int(float(input_data.get('amount', 0)) / 100)), "color": "#16a085"}
+    ]
 
     return {
         "prediction": prediction_text,
         "risk_level": risk_level,
         "explanation": explanation,
-        "confidence": round(confidence, 4)
+        "confidence": confidence,
+        "prob_fraud": prob_fraud,
+        "distributions": feature_distributions
     }

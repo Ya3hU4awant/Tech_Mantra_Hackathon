@@ -9,92 +9,88 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body class="bg-light">
+<body class="bg-dark-theme text-light">
+
+    <!-- Section: Animated Background Nodes -->
+    <div class="bg-nodes"></div>
 
     <!-- Section: Header / Navbar -->
-    <nav class="navbar navbar-dark mb-5">
-        <div class="container justify-content-center">
-            <span class="navbar-brand mb-0 h1 fw-bold fs-3">🛡️ {{ title }}</span>
+    <nav class="navbar navbar-dark mb-5 border-bottom border-secondary animate-fade-down">
+        <div class="container d-flex justify-content-between align-items-center">
+            <span class="navbar-brand mb-0 h1 fw-bold fs-3 tracking-tight">PROTECT<span class="text-primary">AI</span></span>
+            <span class="badge bg-primary rounded-pill px-3 py-2 fw-semibold">LIVE PROTECTION ACTIVE</span>
         </div>
     </nav>
 
     <div class="container pb-5">
-        <!-- Section: Flash Messages -->
-        {% with messages = get_flashed_messages(with_categories=true) %}
-          {% if messages %}
-            {% for category, message in messages %}
-              <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-              </div>
-            {% endfor %}
-          {% endif %}
-        {% endwith %}
-
         <div class="row justify-content-center">
-            <div class="col-md-6">
+            <div class="col-md-6 col-lg-5 animate-slide-up">
                 <!-- Section: Analysis Form Card -->
-                <div class="card shadow-lg border-0 rounded-4 glass-card">
-                    <div class="card-body p-5">
-                        <div class="text-center mb-4">
-                            <h2 class="fw-bold text-dark">Analyze Transaction</h2>
-                            <p class="text-muted small">Enter transaction details for real-time risk assessment</p>
+                <div class="card shadow-2xl border-0 rounded-4 premium-card p-2">
+                    <div class="card-body p-4 p-md-5">
+                        <div class="text-center mb-5">
+                            <div class="icon-box-pulse mb-3 mx-auto">
+                                <span class="fs-1">🔍</span>
+                            </div>
+                            <h2 class="fw-800 text-white mb-2">FRAUD DETECTOR</h2>
+                            <p class="text-secondary small opacity-75">Real-time pattern recognition for digital transactions</p>
                         </div>
 
                         <form action="{{ url_for('predict') }}" method="POST">
                             <!-- Amount Input -->
-                            <div class="mb-4">
-                                <label for="amount" class="form-label fw-semibold text-secondary">Transaction Amount (₹)</label>
+                            <div class="mb-4 input-group-modern animate-staggered-fade" style="animation-delay: 0.2s;">
+                                <label for="amount" class="form-label-premium">Transaction Amount (₹)</label>
                                 <div class="input-group">
-                                    <span class="input-group-text bg-white border-end-0">₹</span>
-                                    <input type="number" step="0.01" class="form-control border-start-0 ps-0" id="amount" name="amount" placeholder="e.g., 1200.50" required>
+                                    <span class="input-group-text-modern">₹</span>
+                                    <input type="number" step="0.01" class="form-control-modern" id="amount" name="amount" placeholder="0.00" required>
                                 </div>
                             </div>
 
                             <!-- Transaction Type Select -->
-                            <div class="mb-4">
-                                <label for="transaction_type" class="form-label fw-semibold text-secondary">Transaction Type</label>
-                                <select class="form-select" id="transaction_type" name="transaction_type" required>
-                                    <option value="" disabled selected>Select Type...</option>
-                                    <option value="online">Online Purchase</option>
-                                    <option value="in-store">In-Store Swipe</option>
-                                    <option value="wire-transfer">Wire Transfer</option>
+                            <div class="mb-4 animate-staggered-fade" style="animation-delay: 0.3s;">
+                                <label for="transaction_type" class="form-label-premium">Channel Source</label>
+                                <select class="form-select-modern" id="transaction_type" name="transaction_type" required>
+                                    <option value="" disabled selected>Select method...</option>
+                                    <option value="online">Online Transaction</option>
+                                    <option value="in-store">In-Store Merchant</option>
+                                    <option value="wire-transfer">Direct Wire Transfer</option>
                                 </select>
                             </div>
 
-                            <div class="row mb-4">
+                            <div class="row g-3 mb-5 animate-staggered-fade" style="animation-delay: 0.4s;">
                                 <!-- Location Mismatch Radios -->
                                 <div class="col-6">
-                                    <label class="form-label fw-semibold text-secondary d-block">Location Mismatch?</label>
-                                    <div class="btn-group w-100" role="group">
-                                        <input type="radio" class="btn-check" name="location_mismatch" id="lm_no" value="no" checked>
-                                        <label class="btn btn-outline-primary" for="lm_no">No</label>
-                                        <input type="radio" class="btn-check" name="location_mismatch" id="lm_yes" value="yes">
-                                        <label class="btn btn-outline-primary" for="lm_yes">Yes</label>
+                                    <label class="form-label-premium">Location Mismatch</label>
+                                    <div class="radio-toggle-group">
+                                        <input type="radio" name="location_mismatch" id="lm_no" value="no" checked>
+                                        <label for="lm_no">Normal</label>
+                                        <input type="radio" name="location_mismatch" id="lm_yes" value="yes">
+                                        <label for="lm_yes">Mismatch</label>
                                     </div>
                                 </div>
                                 <!-- Time of Day Radios -->
                                 <div class="col-6">
-                                    <label class="form-label fw-semibold text-secondary d-block">Time of Day</label>
-                                    <div class="btn-group w-100" role="group">
-                                        <input type="radio" class="btn-check" name="time_of_day" id="tod_day" value="day" checked>
-                                        <label class="btn btn-outline-primary" for="tod_day">Day</label>
-                                        <input type="radio" class="btn-check" name="time_of_day" id="tod_night" value="night">
-                                        <label class="btn btn-outline-primary" for="tod_night">Night</label>
+                                    <label class="form-label-premium">Time Signature</label>
+                                    <div class="radio-toggle-group">
+                                        <input type="radio" name="time_of_day" id="tod_day" value="day" checked>
+                                        <label for="tod_day">Day</label>
+                                        <input type="radio" name="time_of_day" id="tod_night" value="night">
+                                        <label for="tod_night">Night</label>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Submit Button -->
-                            <button type="submit" class="btn btn-primary w-100 py-3 fw-bold rounded-pill shadow-sm mt-2 transition-btn">
-                                ANALYZE TRANSACTION
+                            <button type="submit" class="btn-premium-action w-100 mb-2 animate-staggered-fade" style="animation-delay: 0.5s;">
+                                <span class="btn-text">RUN AI ANALYSIS</span>
+                                <div class="btn-glow"></div>
                             </button>
                         </form>
                     </div>
                 </div>
 
-                <div class="mt-4 text-center">
-                    <p class="text-muted x-small">Securely powered by PyCaret Machine Learning Engine</p>
+                <div class="mt-5 text-center opacity-50 animate-fade">
+                    <p class="small tracking-widest fw-semibold text-uppercase">Encrypted Analysis Pipeline • V2.1.0</p>
                 </div>
             </div>
         </div>
