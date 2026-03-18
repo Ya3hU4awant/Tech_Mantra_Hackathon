@@ -4,26 +4,26 @@ import numpy as np
 # Set seed for reproducibility
 np.random.seed(42)
 
-def generate_balanced_data(n_samples=400):
-    # 50% Safe, 50% Fraud for a robust trainer
+def generate_balanced_data(n_samples=1000):
+    # 50% Safe, 50% Fraud
     n_fraud = n_samples // 2
     n_safe = n_samples - n_fraud
     
-    # Generate Safe Transactions
+    # Generate Safe Transactions: Low amounts, mostly day, rarely mismatch
     safe_data = {
-        'amount': np.random.uniform(10, 2000, n_safe),
-        'transaction_type': np.random.choice(['online', 'in-store', 'wire-transfer'], n_safe),
-        'location_mismatch': np.random.choice([0, 1], n_safe, p=[0.95, 0.05]),
-        'time_of_day': np.random.choice([0, 1], n_safe, p=[0.8, 0.2]),
+        'amount': np.random.uniform(10, 2500, n_safe),
+        'transaction_type': 'online', # Fixed to match current UI
+        'location_mismatch': np.random.choice([0, 1], n_safe, p=[0.98, 0.02]),
+        'time_of_day': np.random.choice([0, 1], n_safe, p=[0.9, 0.1]),
         'is_fraud': 0
     }
     
-    # Generate Fraud Transactions (Higher amounts, mismatches, and night activity)
+    # Generate Fraud Transactions: High amounts, mostly night, often mismatch
     fraud_data = {
-        'amount': np.random.uniform(3000, 15000, n_fraud),
-        'transaction_type': np.random.choice(['online', 'wire-transfer'], n_fraud),
+        'amount': np.random.uniform(4000, 20000, n_fraud),
+        'transaction_type': 'online', 
         'location_mismatch': np.random.choice([0, 1], n_fraud, p=[0.2, 0.8]),
-        'time_of_day': np.random.choice([0, 1], n_fraud, p=[0.3, 0.7]),
+        'time_of_day': np.random.choice([0, 1], n_fraud, p=[0.1, 0.9]),
         'is_fraud': 1
     }
     

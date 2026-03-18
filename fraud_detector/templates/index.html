@@ -46,15 +46,14 @@
                                 </div>
                             </div>
 
-                            <!-- Transaction Type Select -->
+                            <!-- Fixed Transaction Type -->
                             <div class="mb-4 animate-staggered-fade" style="animation-delay: 0.3s;">
-                                <label for="transaction_type" class="form-label-premium">Channel Source</label>
-                                <select class="form-select-modern" id="transaction_type" name="transaction_type" required>
-                                    <option value="" disabled selected>Select method...</option>
-                                    <option value="online">Online Transaction</option>
-                                    <option value="in-store">In-Store Merchant</option>
-                                    <option value="wire-transfer">Direct Wire Transfer</option>
-                                </select>
+                                <label class="form-label-premium">Channel Source</label>
+                                <div class="form-control-modern d-flex align-items-center bg-dark-soft border-primary-glow">
+                                    <span class="text-white fw-bold">Digital Transactions</span>
+                                    <span class="ms-auto badge bg-primary-soft text-primary small">PREDEFINED</span>
+                                </div>
+                                <input type="hidden" name="transaction_type" value="online">
                             </div>
 
                             <div class="row g-3 mb-5 animate-staggered-fade" style="animation-delay: 0.4s;">

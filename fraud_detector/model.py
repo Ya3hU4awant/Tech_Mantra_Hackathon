@@ -84,10 +84,8 @@ def predict_fraud(input_data: dict) -> dict:
     else:
         explanation = f"Transaction appears secure. Risk evaluation: {int(prob_fraud*100)}%."
 
-    # Generate Feature Distribution Data (simulated for UI)
-    # Formatting fix: removed 'unit' to prevent overlapping icons in UI
     feature_distributions = [
-        {"label": "Online Purchase", "value": 85 if input_data.get('transaction_type') == 'online' else 15, "color": "#3498db"},
+        {"label": "Digital Transactions", "value": 85 if input_data.get('transaction_type') == 'online' else 15, "color": "#3498db"},
         {"label": "In-Store Swipe", "value": 85 if input_data.get('transaction_type') == 'in-store' else 15, "color": "#3498db"},
         {"label": "Wire Transfer", "value": 85 if input_data.get('transaction_type') == 'wire-transfer' else 15, "color": "#3498db"},
         {"label": "Location Mismatch", "value": 80 if input_data.get('location_mismatch') == 'yes' else 10, "color": "#e67e22"},
