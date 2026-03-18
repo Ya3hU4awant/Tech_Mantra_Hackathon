@@ -1,0 +1,26 @@
+# Python Virtual Environments
+venv/
+.venv/
+env/
+fraud_detector/venv/
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# PyCaret/ML Logs
+logs.log
+mlruns/
+*.pkl
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# OS specific files
+.DS_Store
+Thumbs.db

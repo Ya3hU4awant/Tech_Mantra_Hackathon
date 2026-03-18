@@ -1,0 +1,7 @@
+# Section: Project Dependencies (Flexible)
+# Description: Minimal pins to allow pip to find compatible versions for Python 3.13.
+
+flask==3.0.3
+pandas==2.1.4
+pycaret==3.3.2
+numpy<2.0.0
